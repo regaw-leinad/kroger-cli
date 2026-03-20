@@ -10,12 +10,14 @@ import (
 
 // JSONPrinter renders all output as JSON.
 type JSONPrinter struct {
-	out io.Writer
+	enc *json.Encoder
 	err io.Writer
 }
 
 func NewJSONPrinter(out, err io.Writer) *JSONPrinter {
-	return &JSONPrinter{out: out, err: err}
+	enc := json.NewEncoder(out)
+	enc.SetEscapeHTML(false)
+	return &JSONPrinter{enc: enc, err: err}
 }
 
 func (p *JSONPrinter) Products(products []api.Product, storeDomain string) error {
@@ -72,8 +74,5 @@ func (p *JSONPrinter) Success(format string, args ...any) {
 }
 
 func (p *JSONPrinter) encode(v any) error {
-	enc := json.NewEncoder(p.out)
-	enc.SetIndent("", "  ")
-	enc.SetEscapeHTML(false)
-	return enc.Encode(v)
+	return p.enc.Encode(v)
 }

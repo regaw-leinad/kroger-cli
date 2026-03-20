@@ -13,6 +13,7 @@ import (
 func Execute() int {
 	root := newRootCmd()
 	if err := root.Execute(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		return 1
 	}
 	return 0

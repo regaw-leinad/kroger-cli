@@ -8,12 +8,14 @@ allowed-tools: Bash(kroger *)
 
 Help users shop for groceries using the `kroger` CLI.
 
+All commands automatically output JSON when run by an agent (non-TTY). No need to pass `--json`.
+
 ## Prerequisites
 
 Before shopping, verify the CLI is set up:
 
 ```bash
-kroger auth status --json
+kroger auth status
 ```
 
 If not configured, guide the user through:
@@ -27,25 +29,25 @@ If not configured, guide the user through:
 ### 1. Search for products
 
 ```bash
-kroger product search "organic whole milk" --limit 10 --json
+kroger product search "organic whole milk" --limit 10
 ```
 
 Flags: `--brand`, `--limit` (1-50), `--fulfillment` (pickup, delivery, in_store, ship).
 
 ### 2. Pick the best match
 
-Review the results. Consider: price, brand preference, size, and availability. The UPC field identifies each product.
+Review the results. Consider: price, brand preference, size, and availability. The `upc` field identifies each product. The `url` field links to the product page - share it with the user so they can see the product.
 
 ### 3. Add to cart
 
 Single item:
 ```bash
-kroger cart add <upc> --quantity 1 --json
+kroger cart add <upc> --quantity 1
 ```
 
 Multiple items:
 ```bash
-kroger cart add --items '[{"upc":"<upc1>","quantity":1},{"upc":"<upc2>","quantity":2}]' --json
+kroger cart add --items '[{"upc":"<upc1>","quantity":1},{"upc":"<upc2>","quantity":2}]'
 ```
 
 ## Supported Chains
@@ -58,14 +60,12 @@ This CLI works with all Kroger-owned stores: Kroger, Fred Meyer, Ralphs, Harris 
 - The cart is **add-only** - you cannot view, remove, or modify items via the API
 - You **cannot** place orders, schedule pickup/delivery, or checkout via the API
 - After adding items, tell the user to go to their store's website (e.g. fredmeyer.com, kroger.com) to review their cart, schedule pickup or delivery, and complete checkout
-- Each product in the JSON output includes a `url` field linking directly to the product page
-- All commands output JSON automatically when piped (non-TTY), or with `--json`
 - Use `--quiet` to suppress status messages
 
 ## Handling $ARGUMENTS
 
 When the user says something like "add milk and eggs to my Kroger cart":
 1. Search for each item separately
-2. Present options with prices to the user
+2. Present options with prices and product URLs to the user
 3. Confirm before adding to cart
 4. Add confirmed items in a single batch call
