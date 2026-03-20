@@ -29,7 +29,7 @@ type Printer interface {
 	Products(products []api.Product, storeDomain string) error
 	Product(product *api.Product, storeDomain string) error
 	Locations(locations []api.Location) error
-	Location(location *api.Location) error
+	Location(location *api.Location, showDepartments bool) error
 	StoreSelected(id, name string) error
 	AuthStatus(status AuthStatus) error
 	CartAdded(result CartResult) error

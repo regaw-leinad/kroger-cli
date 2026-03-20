@@ -41,7 +41,10 @@ func (p *JSONPrinter) Locations(locations []api.Location) error {
 	return p.encode(slim)
 }
 
-func (p *JSONPrinter) Location(location *api.Location) error {
+func (p *JSONPrinter) Location(location *api.Location, showDepartments bool) error {
+	if showDepartments {
+		return p.encode(location)
+	}
 	return p.encode(location.Slim())
 }
 

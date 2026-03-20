@@ -105,7 +105,9 @@ func newStoreSelectCmd(cfg *config.Config) *cobra.Command {
 }
 
 func newStoreShowCmd(cfg *config.Config) *cobra.Command {
-	return &cobra.Command{
+	var showDepartments bool
+
+	cmd := &cobra.Command{
 		Use:   "show [location-id]",
 		Short: "Show store details",
 		Long:  "Show details for a store. If no ID is given, shows the default store.",
@@ -131,7 +133,11 @@ func newStoreShowCmd(cfg *config.Config) *cobra.Command {
 				return err
 			}
 
-			return out.Location(loc)
+			return out.Location(loc, showDepartments)
 		},
 	}
+
+	cmd.Flags().BoolVar(&showDepartments, "departments", false, "Show full department list")
+
+	return cmd
 }

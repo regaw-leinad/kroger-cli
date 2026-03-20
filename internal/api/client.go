@@ -139,5 +139,22 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
-	return fmt.Sprintf("API error (HTTP %d): %s", e.StatusCode, e.Body)
+	reason := parseErrorReason(e.Body)
+	if reason != "" {
+		return fmt.Sprintf("%s (HTTP %d)", reason, e.StatusCode)
+	}
+	return fmt.Sprintf("API error (HTTP %d)", e.StatusCode)
+}
+
+func parseErrorReason(body string) string {
+	// Kroger returns {"errors":{"reason":"Service Unavailable",...}}
+	var parsed struct {
+		Errors struct {
+			Reason string `json:"reason"`
+		} `json:"errors"`
+	}
+	if err := json.Unmarshal([]byte(body), &parsed); err == nil && parsed.Errors.Reason != "" {
+		return parsed.Errors.Reason
+	}
+	return ""
 }
