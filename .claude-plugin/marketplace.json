@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    {
+      "name": "kroger-cli",
+      "description": "Shop for groceries at Kroger using AI agents",
+      "path": "."
+    }
+  ]
+}

@@ -71,20 +71,27 @@ func (p Price) DisplayPrice() float64 {
 	return p.Regular
 }
 
+// SlimFulfillment holds availability without shipToHome (always false).
+type SlimFulfillment struct {
+	Curbside bool `json:"curbside"`
+	Delivery bool `json:"delivery"`
+	InStore  bool `json:"inStore"`
+}
+
 // SlimProduct is a flattened, agent-friendly product representation.
 type SlimProduct struct {
-	UPC         string      `json:"upc"`
-	Brand       string      `json:"brand"`
-	Description string      `json:"description"`
-	Size        string      `json:"size"`
-	Price       float64     `json:"price"`
-	Promo       float64     `json:"promo,omitempty"`
-	SoldBy      string      `json:"soldBy"`
-	Categories  []string    `json:"categories"`
-	Fulfillment Fulfillment `json:"fulfillment"`
-	Temperature string      `json:"temperature,omitempty"`
-	Image       string      `json:"image"`
-	URL         string      `json:"url"`
+	UPC         string          `json:"upc"`
+	Brand       string          `json:"brand,omitempty"`
+	Description string          `json:"description"`
+	Size        string          `json:"size,omitempty"`
+	Price       float64         `json:"price"`
+	Promo       float64         `json:"promo,omitempty"`
+	SoldBy      string          `json:"soldBy,omitempty"`
+	Categories  []string        `json:"categories,omitempty"`
+	Fulfillment SlimFulfillment `json:"fulfillment"`
+	Temperature string          `json:"temperature,omitempty"`
+	Image       string          `json:"image,omitempty"`
+	URL         string          `json:"url"`
 }
 
 // Slim converts a Product to a SlimProduct.
@@ -93,7 +100,7 @@ func (p Product) Slim(storeDomain string) SlimProduct {
 		UPC:         p.UPC,
 		Brand:       p.Brand,
 		Description: p.Description,
-		Categories:  p.Categories,
+		Categories:  dedup(p.Categories),
 		Image:       p.FrontImageURL(),
 		URL:         p.ProductURL(storeDomain),
 	}
@@ -108,9 +115,26 @@ func (p Product) Slim(storeDomain string) SlimProduct {
 			s.Promo = item.Price.Promo
 		}
 		s.SoldBy = item.SoldBy
-		s.Fulfillment = item.Fulfillment
+		s.Fulfillment = SlimFulfillment{
+			Curbside: item.Fulfillment.Curbside,
+			Delivery: item.Fulfillment.Delivery,
+			InStore:  item.Fulfillment.InStore,
+		}
 	}
 	return s
+}
+
+func dedup(s []string) []string {
+	seen := make(map[string]bool)
+	result := make([]string, 0, len(s))
+	for _, v := range s {
+		if seen[v] {
+			continue
+		}
+		seen[v] = true
+		result = append(result, v)
+	}
+	return result
 }
 
 // FrontImageURL returns the medium front image URL, or empty string if unavailable.
@@ -120,7 +144,7 @@ func (p Product) FrontImageURL() string {
 			continue
 		}
 		for _, size := range img.Sizes {
-			if size.Size == "medium" {
+			if size.Size == "xlarge" {
 				return size.URL
 			}
 		}
@@ -133,7 +157,7 @@ func (p Product) FrontImageURL() string {
 	for _, img := range p.Images {
 		if img.Featured && len(img.Sizes) > 0 {
 			for _, size := range img.Sizes {
-				if size.Size == "medium" {
+				if size.Size == "xlarge" {
 					return size.URL
 				}
 			}

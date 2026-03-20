@@ -116,7 +116,7 @@ func (p *HumanPrinter) AuthStatus(status AuthStatus) error {
 	if status.TokenExpired {
 		fmt.Fprintln(p.out, "Logged in: yes (token expired, will refresh on next request)")
 	} else {
-		fmt.Fprintf(p.out, "Logged in: yes (token expires at %s)\n", status.ExpiresAt)
+		fmt.Fprintf(p.out, "Logged in: yes (token expires at %s)\n", status.ExpiresAt.Local().Format("3:04 PM"))
 	}
 
 	if status.StoreID != "" {

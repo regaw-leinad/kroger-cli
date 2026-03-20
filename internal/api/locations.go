@@ -18,6 +18,39 @@ type Location struct {
 	Departments []Department    `json:"departments"`
 }
 
+// SlimLocation is a flattened, agent-friendly location representation.
+type SlimLocation struct {
+	LocationID  string          `json:"locationId"`
+	Chain       string          `json:"chain"`
+	Name        string          `json:"name"`
+	Phone       string          `json:"phone,omitempty"`
+	Address     LocationAddress `json:"address"`
+	Geolocation Geolocation     `json:"geolocation"`
+	HasPickup   bool            `json:"hasPickup"`
+	HasPharmacy bool            `json:"hasPharmacy"`
+}
+
+// Slim converts a Location to a SlimLocation.
+func (l Location) Slim() SlimLocation {
+	s := SlimLocation{
+		LocationID:  l.LocationID,
+		Chain:       l.Chain,
+		Name:        l.Name,
+		Phone:       l.Phone,
+		Address:     l.Address,
+		Geolocation: l.Geolocation,
+	}
+	for _, dept := range l.Departments {
+		switch dept.DepartmentID {
+		case "94":
+			s.HasPickup = true
+		case "09":
+			s.HasPharmacy = true
+		}
+	}
+	return s
+}
+
 // LocationAddress holds a store's address.
 type LocationAddress struct {
 	AddressLine1 string `json:"addressLine1"`

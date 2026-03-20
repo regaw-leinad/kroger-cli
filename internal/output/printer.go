@@ -1,6 +1,10 @@
 package output
 
-import "github.com/regaw-leinad/kroger-cli/internal/api"
+import (
+	"time"
+
+	"github.com/regaw-leinad/kroger-cli/internal/api"
+)
 
 // AuthStatus holds the data needed to render auth status.
 type AuthStatus struct {
@@ -8,7 +12,7 @@ type AuthStatus struct {
 	ClientID       string
 	LoggedIn       bool
 	TokenExpired   bool
-	ExpiresAt      string
+	ExpiresAt      time.Time
 	StoreID        string
 	StoreName      string
 }

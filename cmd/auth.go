@@ -149,7 +149,7 @@ func newAuthStatusCmd(cfg *config.Config) *cobra.Command {
 				ClientID:       creds.ClientID,
 				LoggedIn:       tok.AccessToken != "",
 				TokenExpired:   tok.AccessToken != "" && tok.IsExpired(),
-				ExpiresAt:      tok.ExpiresAt.Local().Format("3:04 PM"),
+				ExpiresAt:      tok.ExpiresAt,
 				StoreID:        cfg.DefaultStoreID,
 				StoreName:      cfg.DefaultStoreName,
 			})

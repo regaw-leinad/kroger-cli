@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/regaw-leinad/kroger-cli/internal/api"
 )
@@ -33,11 +34,15 @@ func (p *JSONPrinter) Product(product *api.Product, storeDomain string) error {
 }
 
 func (p *JSONPrinter) Locations(locations []api.Location) error {
-	return p.encode(locations)
+	slim := make([]api.SlimLocation, len(locations))
+	for i, loc := range locations {
+		slim[i] = loc.Slim()
+	}
+	return p.encode(slim)
 }
 
 func (p *JSONPrinter) Location(location *api.Location) error {
-	return p.encode(location)
+	return p.encode(location.Slim())
 }
 
 func (p *JSONPrinter) StoreSelected(id, name string) error {
@@ -52,7 +57,7 @@ func (p *JSONPrinter) AuthStatus(status AuthStatus) error {
 		"has_credentials": status.HasCredentials,
 		"logged_in":       status.LoggedIn,
 		"token_expired":   status.TokenExpired,
-		"expires_at":      status.ExpiresAt,
+		"expires_at":      status.ExpiresAt.Format(time.RFC3339),
 		"store_id":        status.StoreID,
 		"store_name":      status.StoreName,
 	})

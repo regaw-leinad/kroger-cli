@@ -170,7 +170,11 @@ Every product includes a `url` field linking directly to the product page and an
 Install as a Claude Code plugin to get the `/kroger` skill:
 
 ```bash
-claude plugin install github.com/regaw-leinad/kroger-cli
+# Add the marketplace
+/plugin marketplace add regaw-leinad/kroger-cli
+
+# Install the plugin
+/plugin install kroger-cli@regaw-leinad/kroger-cli
 ```
 
 Then just ask Claude to shop for you.
