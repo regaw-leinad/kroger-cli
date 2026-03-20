@@ -1,0 +1,8 @@
+{
+  "name": "kroger-cli",
+  "description": "Shop for groceries at Kroger using AI agents. Search products, find stores, and add items to your cart.",
+  "version": "1.0.0",
+  "author": {
+    "name": "regaw-leinad"
+  }
+}

@@ -1,0 +1,17 @@
+# Binary
+bin/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.task/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test
+coverage.out
